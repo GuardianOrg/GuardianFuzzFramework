@@ -1,0 +1,93 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.0;
+
+import "./PostconditionsBase.sol";
+
+abstract contract PostconditionsEpochLiquidityModule is PostconditionsBase {
+
+    struct createLPPostParams {
+        bool success;
+        bytes returnData;
+        address[] actorsToUpdate;
+        uint256 positionId;
+        uint128 liquidity;
+        uint256 amountTokenA;
+        uint256 amountTokenB;
+        address market;
+    }
+
+    function createLiquidityPositionPostconditions(
+        createLPPostParams memory params
+    ) internal {
+        if (params.success) {
+            _after(params.actorsToUpdate, params.market);
+            invariant_LIQUID_01(params.market);
+            invariant_LIQUID_02(params.market);
+            invariant_LIQUID_05(params.positionId, params.liquidity, params.amountTokenA, params.amountTokenB, params.market);
+            invariant_LIQUID_06(params.market);
+            invariant_LIQUID_10(params.positionId, params.market);
+            onSuccessInvariantsGeneral(params.returnData, params.actorsToUpdate[0], params.market);
+        } else {
+            onFailInvariantsGeneral(params.returnData);
+        }
+    }
+
+    function decreaseLiquidityPositionPostConditions(
+        bool success,
+        bytes memory returnData,
+        address[] memory actorsToUpdate,
+        uint256 positionId,
+        uint256 liquidityRedeemed,
+        address market
+    ) internal {
+        if (success) {
+            decreaseLPCount += 1;
+            _after(actorsToUpdate, market);
+            invariant_LIQUID_02(market);
+            invariant_LIQUID_08(market);
+            onSuccessInvariantsGeneral(returnData, actorsToUpdate[0], market);
+        } else {
+            // invariant_LIQUID_09(positionId, liquidityRedeemed, returnData, market);
+            onFailInvariantsGeneral(returnData);
+        }
+    }
+
+    function increaseLiquidityPositionPostConditions(
+        bool success,
+        bytes memory returnData,
+        address[] memory actorsToUpdate,
+        address market
+    ) internal {
+        if (success) {
+            increaseLPCount += 1;
+            _after(actorsToUpdate, market);
+            invariant_LIQUID_02(market);
+            invariant_LIQUID_07(market);
+            onSuccessInvariantsGeneral(returnData, actorsToUpdate[0], market);
+        } else {
+            onFailInvariantsGeneral(returnData);
+        }
+    }
+
+    function closeLiquidityPositionPostConditions(
+        bool success,
+        bytes memory returnData,
+        address[] memory actorsToUpdate,
+        bool changedToTrade,
+        IFoilStructs.LiquidityDecreaseParams memory params,
+        address market
+    ) internal {
+        if (success) {
+            closeLPCount += 1;
+            _after(actorsToUpdate, market);
+
+            if (changedToTrade) {
+                invariant_LIQUID_04(params.positionId, market);
+            }
+
+            onSuccessInvariantsGeneral(returnData, actorsToUpdate[0], market);
+        } else {
+            onFailInvariantsGeneral(returnData);
+        }
+    }
+}
