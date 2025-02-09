@@ -39,6 +39,9 @@ contract BeforeAfter is FuzzSetup {
     }
 
     function _before(address[] memory actors) internal {
+        // Reset full state mapping
+        delete states[0];
+        delete states[1];
         _setStates(0, actors);
     }
 

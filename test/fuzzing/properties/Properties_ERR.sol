@@ -21,6 +21,14 @@ abstract contract Properties_ERR is RevertHandler {
         return panicCodes;
     }
 
+    // Add additional errors here
+    // Example:
+    // Deposit errors [0-5]
+    // allowedErrors[0] = IUsdnProtocolErrors.UsdnProtocolEmptyVault.selector;
+    // allowedErrors[1] = IUsdnProtocolErrors
+    //     .UsdnProtocolDepositTooSmall
+    //     .selector;
+
     function _getAllowedCustomErrors() internal pure virtual override returns (bytes4[] memory) {
         bytes4[] memory allowedErrors = new bytes4[](1);
         // allowedErrors[0] = bytes4(abi.encode(""));

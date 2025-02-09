@@ -16,6 +16,11 @@ abstract contract RevertHandler is PropertiesBase {
             return;
         }
 
+        if (returnData == 0x82b42900) {
+            fl.log("Unauthorized selector");
+            return;
+        }
+
         bytes4 returnedError;
         assembly {
             returnedError := mload(add(returnData, 0x20))
