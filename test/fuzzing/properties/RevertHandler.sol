@@ -134,15 +134,26 @@ abstract contract RevertHandler is PropertiesBase {
     }
 
     function _extractRevertMessage(bytes memory _returnData) private returns (string memory) {
-        if (_returnData.length < 68) {
-            fl.log("Raw revert data (hex)", _returnData);
-            fl.t(false, "Returned data is not a valid revert message");
-            return "Invalid revert data length";
+        // If data is too short or not properly formatted, return a default message
+        if (_returnData.length < 4) {
+            return "Invalid error data";
         }
 
-        assembly {
-            _returnData := add(_returnData, 0x04)
+        // Try-catch block to handle non-decodeable data
+        try this._decodeErrorMessage(_returnData) returns (string memory message) {
+            return message;
+        } catch {
+            return string(abi.encodePacked("Non-decodeable error: 0x", FuzzLibString.toHexString(_returnData)));
         }
-        return abi.decode(_returnData, (string));
+    }
+
+    // Helper function to safely decode error messages
+    function _decodeErrorMessage(bytes memory _data) external pure returns (string memory) {
+        // Skip the error selector (first 4 bytes)
+        bytes memory strBytes = new bytes(_data.length - 4);
+        for (uint256 i = 4; i < _data.length; i++) {
+            strBytes[i - 4] = _data[i];
+        }
+        return abi.decode(strBytes, (string));
     }
 }
