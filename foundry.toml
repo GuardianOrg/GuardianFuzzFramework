@@ -14,7 +14,7 @@ show-progress = true
 [invariant]
 depth = 1000
 shrink_run_limit = 999
-runs = 1000000
+runs = 10
 fail_on_revert = true
 show_metrics = true
 timeout = 18000

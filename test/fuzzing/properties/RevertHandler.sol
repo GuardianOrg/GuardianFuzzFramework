@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./PropertiesBase.sol";
+import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
 abstract contract RevertHandler is PropertiesBase {
     function invariant_ERR(bytes memory returnData) internal {
@@ -16,8 +17,8 @@ abstract contract RevertHandler is PropertiesBase {
             return;
         }
 
-        if (returnData == 0x82b42900) {
-            fl.log("Unauthorized selector");
+        if (returnData.length == 4) {
+            _handleSoladyError(returnData);
             return;
         }
 
@@ -57,6 +58,28 @@ abstract contract RevertHandler is PropertiesBase {
         return allowedErrors;
     }
 
+    function _handleSoladyError(bytes memory returnData) private {
+        bytes4 returnedError;
+        assembly {
+            returnedError := mload(add(returnData, 0x20))
+        }
+
+        fl.errAllow(returnedError, _getAllowedSoladyERC20Error(), ERR_01);
+    }
+
+    function _getAllowedSoladyERC20Error() internal pure virtual returns (bytes4[] memory) {
+        bytes4[] memory allowedErrors = new bytes4[](7);
+        allowedErrors[0] = SafeTransferLib.ETHTransferFailed.selector;
+        allowedErrors[1] = SafeTransferLib.TransferFromFailed.selector;
+        allowedErrors[2] = SafeTransferLib.TransferFailed.selector;
+        allowedErrors[3] = SafeTransferLib.ApproveFailed.selector;
+        allowedErrors[4] = SafeTransferLib.Permit2Failed.selector;
+        allowedErrors[5] = SafeTransferLib.Permit2AmountOverflow.selector;
+        allowedErrors[6] = bytes4(0x82b42900); //unauthorized selector
+
+        return allowedErrors;
+    }
+
     function _isAllowedERC20Error(bytes memory returnData) internal pure virtual returns (bool) {
         bytes[] memory allowedErrors = new bytes[](9);
         allowedErrors[0] = INSUFFICIENT_ALLOWANCE;
@@ -68,6 +91,21 @@ abstract contract RevertHandler is PropertiesBase {
         allowedErrors[6] = DECREASED_ALLOWANCE;
         allowedErrors[7] = BURN_EXCEEDS_BALANCE;
         allowedErrors[8] = EXCEEDS_BALANCE_ERROR;
+
+        for (uint256 i = 0; i < allowedErrors.length; i++) {
+            if (keccak256(returnData) == keccak256(allowedErrors[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function _isAllowedFoundryERC20Error(bytes memory returnData) internal virtual returns (bool) {
+        bytes memory ADDITION_OVERFLOW =
+            abi.encodeWithSelector(bytes4(keccak256("Error(string)")), "ERC20: addition overflow");
+
+        bytes[] memory allowedErrors = new bytes[](1);
+        allowedErrors[0] = ADDITION_OVERFLOW;
 
         for (uint256 i = 0; i < allowedErrors.length; i++) {
             if (keccak256(returnData) == keccak256(allowedErrors[i])) {
@@ -101,6 +139,11 @@ abstract contract RevertHandler is PropertiesBase {
 
         if (_isAllowedERC20Error(returnData)) {
             fl.log("ERC20 error encountered", revertMsg);
+            return;
+        }
+
+        if (_isAllowedFoundryERC20Error(returnData)) {
+            fl.log("Foundry MockERC20 error encountered", revertMsg);
             return;
         }
 
