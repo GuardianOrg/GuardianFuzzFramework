@@ -62,6 +62,11 @@ contract BeforeAfter is FuzzSetup {
 
     function _updateCommonState(uint8 callNum) private {
         checkContractEthBalance(callNum);
+        _logicalCoverage(callNum);
+    }
+
+    function _logicalCoverage(uint8 callNum) private {
+        // Implement logical coverage here.
     }
 
     function _setActorState(uint8 callNum, address actor) internal virtual {

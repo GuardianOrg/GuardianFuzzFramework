@@ -31,7 +31,7 @@ balanceContract: 0xffffffffffffffffffffffffffffffffffffffffffffffff
 maxValue: 100000000000000000000000000000 # 100000000000 eth
 
 # maxTimeDelay: 6
-format: text 
+# format: text 
 
 filterBlacklist: true
 filterFunctions: [

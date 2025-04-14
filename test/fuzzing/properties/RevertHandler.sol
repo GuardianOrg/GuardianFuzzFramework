@@ -17,11 +17,6 @@ abstract contract RevertHandler is PropertiesBase {
             return;
         }
 
-        if (returnData.length == 4) {
-            _handleSoladyError(returnData);
-            return;
-        }
-
         bytes4 returnedError;
         assembly {
             returnedError := mload(add(returnData, 0x20))
