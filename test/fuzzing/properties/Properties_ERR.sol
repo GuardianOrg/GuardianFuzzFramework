@@ -55,16 +55,4 @@ abstract contract Properties_ERR is RevertHandler {
         return false;
     }
 
-    function _getAllowedSoladyERC20Error() internal pure virtual override returns (bytes4[] memory) {
-        bytes4[] memory allowedErrors = new bytes4[](7);
-        allowedErrors[0] = SafeTransferLib.ETHTransferFailed.selector;
-        allowedErrors[1] = SafeTransferLib.TransferFromFailed.selector;
-        allowedErrors[2] = SafeTransferLib.TransferFailed.selector;
-        allowedErrors[3] = SafeTransferLib.ApproveFailed.selector;
-        allowedErrors[4] = SafeTransferLib.Permit2Failed.selector;
-        allowedErrors[5] = SafeTransferLib.Permit2AmountOverflow.selector;
-        allowedErrors[6] = bytes4(0x82b42900); //unauthorized selector
-
-        return allowedErrors;
-    }
 }

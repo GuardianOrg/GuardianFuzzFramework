@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "./PropertiesBase.sol";
-import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
 abstract contract RevertHandler is PropertiesBase {
     function invariant_ERR(bytes memory returnData) internal {
@@ -50,28 +49,6 @@ abstract contract RevertHandler is PropertiesBase {
         bytes4[] memory allowedErrors = new bytes4[](1);
         // Uncomment to allow empty reverts:
         // allowedErrors[0] = bytes4(abi.encode(""));
-        return allowedErrors;
-    }
-
-    function _handleSoladyError(bytes memory returnData) private {
-        bytes4 returnedError;
-        assembly {
-            returnedError := mload(add(returnData, 0x20))
-        }
-
-        fl.errAllow(returnedError, _getAllowedSoladyERC20Error(), ERR_01);
-    }
-
-    function _getAllowedSoladyERC20Error() internal pure virtual returns (bytes4[] memory) {
-        bytes4[] memory allowedErrors = new bytes4[](7);
-        allowedErrors[0] = SafeTransferLib.ETHTransferFailed.selector;
-        allowedErrors[1] = SafeTransferLib.TransferFromFailed.selector;
-        allowedErrors[2] = SafeTransferLib.TransferFailed.selector;
-        allowedErrors[3] = SafeTransferLib.ApproveFailed.selector;
-        allowedErrors[4] = SafeTransferLib.Permit2Failed.selector;
-        allowedErrors[5] = SafeTransferLib.Permit2AmountOverflow.selector;
-        allowedErrors[6] = bytes4(0x82b42900); //unauthorized selector
-
         return allowedErrors;
     }
 
