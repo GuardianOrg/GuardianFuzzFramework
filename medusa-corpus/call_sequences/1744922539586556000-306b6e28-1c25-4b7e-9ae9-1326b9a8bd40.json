@@ -1,0 +1,72 @@
+[
+ {
+  "call": {
+   "from": "0x0000000000000000000000000000000000010000",
+   "to": "0xa647ff3c36cfab592509e13860ab8c4f28781a66",
+   "nonce": 0,
+   "value": "0x0",
+   "gasLimit": 125000000,
+   "gasPrice": "0x1",
+   "gasFeeCap": "0x0",
+   "gasTipCap": "0x0",
+   "data": "0x7a24d15d0000000000000000000000000000000000000000000000000000000000000010016c364a3ead669e4f6683160b528c14ed5bb862f3b1c79ec203c8893e66fe73",
+   "dataAbiValues": {
+    "methodSignature": "fuzz_guided_sampleFunctionCallTwice(uint256,uint256)",
+    "inputValues": [
+     "16",
+     "643507027518807012524355985007976709613263214412119159299433286113750875763"
+    ]
+   },
+   "AccessList": null,
+   "SkipAccountChecks": true
+  },
+  "blockNumberDelay": 10,
+  "blockTimestampDelay": 105211
+ },
+ {
+  "call": {
+   "from": "0x0000000000000000000000000000000000010000",
+   "to": "0xa647ff3c36cfab592509e13860ab8c4f28781a66",
+   "nonce": 1,
+   "value": "0x0",
+   "gasLimit": 125000000,
+   "gasPrice": "0x1",
+   "gasFeeCap": "0x0",
+   "gasTipCap": "0x0",
+   "data": "0x61583d900000000000000000000000000000000000000000000000000000000000000010",
+   "dataAbiValues": {
+    "methodSignature": "fuzz_sampleFailWithPanic(uint256)",
+    "inputValues": [
+     "16"
+    ]
+   },
+   "AccessList": null,
+   "SkipAccountChecks": true
+  },
+  "blockNumberDelay": 44413,
+  "blockTimestampDelay": 401856
+ },
+ {
+  "call": {
+   "from": "0x0000000000000000000000000000000000010000",
+   "to": "0xa647ff3c36cfab592509e13860ab8c4f28781a66",
+   "nonce": 2,
+   "value": "0x0",
+   "gasLimit": 125000000,
+   "gasPrice": "0x1",
+   "gasFeeCap": "0x0",
+   "gasTipCap": "0x0",
+   "data": "0x57cee9aa0000000000000000000000000000000000000000000000000000000000000001",
+   "dataAbiValues": {
+    "methodSignature": "fuzz_sampleFailWithRequire(bool)",
+    "inputValues": [
+     true
+    ]
+   },
+   "AccessList": null,
+   "SkipAccountChecks": true
+  },
+  "blockNumberDelay": 17589,
+  "blockTimestampDelay": 579356
+ }
+]
