@@ -4,6 +4,10 @@
 
     echidna test/fuzzing/Fuzz.sol --contract Fuzz --config echidna.yaml
 
+### Use Medusa
+
+    medusa fuzz --config medusa.json
+
 ### Use Foundry
 
     forge test --mp FoundryFuzz.sol
